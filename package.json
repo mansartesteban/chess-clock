@@ -1,0 +1,24 @@
+{
+  "name": "default-project-vite-vue",
+  "version": "1.0.0",
+  "description": "Default project vite and vue",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm i && vite .",
+    "build": "pnpm i && pnpm build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^5.4.9"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "^5.1.4",
+    "sass": "^1.80.3",
+    "unplugin-auto-import": "^0.18.3",
+    "vue": "^3.5.12"
+  }
+}
