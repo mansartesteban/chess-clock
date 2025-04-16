@@ -1,16 +1,20 @@
 import { defineConfig } from "vite";
 import path from "path";
-import AutoImport from "unplugin-auto-import/vite";
 import Vue from "@vitejs/plugin-vue";
+import AutoImport from "unplugin-auto-import/vite";
+import tailwindcss from "@tailwindcss/vite";
+import Component from "unplugin-vue-components/vite";
 
 const root = path.resolve(__dirname);
 
 export default defineConfig({
   plugins: [
     Vue(),
+    tailwindcss(),
     AutoImport({
       imports: ["vue"],
     }),
+    Component(),
   ],
   resolve: {
     alias: {
@@ -23,13 +27,5 @@ export default defineConfig({
         api: "modern",
       },
     },
-  },
-  module: {
-    rules: [
-      {
-        test: /\.scss$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
-      },
-    ],
   },
 });

@@ -16,9 +16,13 @@
     "vite": "^5.4.9"
   },
   "dependencies": {
+    "@heroicons/vue": "^2.2.0",
+    "@tailwindcss/vite": "^4.1.4",
     "@vitejs/plugin-vue": "^5.1.4",
     "sass": "^1.80.3",
+    "tailwindcss": "^4.1.4",
     "unplugin-auto-import": "^0.18.3",
+    "unplugin-vue-components": "^28.5.0",
     "vue": "^3.5.12"
   }
 }
