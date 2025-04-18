@@ -12,17 +12,25 @@
       type: Object,
       required: true,
     },
+    displayMs: {
+      type: Boolean,
+      default: false,
+    },
   });
 
   const formatTime = (time) => {
     console.log("time", time);
-    return [
+    let ret = [
       time.hours.toString().padStart(2, "0"),
       "h ",
       time.minutes.toString().padStart(2, "0"),
       "m ",
       time.seconds.toString().padStart(2, "0"),
-      "s",
-    ].join("");
+    ];
+    if (props.displayMs) {
+      ret.push(".", time.milliseconds.toString().substring(0, 1));
+    }
+    ret.push("s");
+    return ret.join("");
   };
 </script>

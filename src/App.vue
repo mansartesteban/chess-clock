@@ -3,6 +3,7 @@
     <TimerDisplay
       v-if="timers[0]"
       :timer="timers[0]"
+      :displayMs="timers[0].timeRemaining.total < 50000"
       class="rotate-180"
       :class="{ 'bg-green-800 text-white': activePlayer === 0 }"
       @click="changePlayer(0)"
@@ -21,10 +22,16 @@
           class="h-10 w-10 text-white"
         />
       </button>
+      <Select
+        v-model="selectedTiming"
+        :options="timings"
+        label=""
+      ></Select>
     </div>
     <TimerDisplay
       v-if="timers[1]"
       :timer="timers[1]"
+      :displayMs="timers[1].timeRemaining.total < 50000"
       :class="{ 'bg-green-800 text-white': activePlayer === 1 }"
       @click="changePlayer(1)"
     ></TimerDisplay>
@@ -33,40 +40,13 @@
 
 <script setup>
   import { PlayIcon, PauseIcon } from "@heroicons/vue/24/solid";
+  import { watch } from "vue";
 
   const isPaused = ref(true);
-  // class Timer {
-  //   isPaused = true;
-  //   lastCall = 0;
-  //   elaspedTime = 0;
-  //   totalTime = 0;
-
-  //   constructor(totalTime = 0) {
-  //     this.totalTime = totalTime;
-  //     this.timeout = null;
-  //   }
-
-  //   get remaining() {
-  //     return this.totalTime - this.elaspedTime;
-  //   }
-
-  //   start() {
-  //     if (this.timeout) return;
-  //     this.loop();
-  //   }
-
-  //   loop() {
-  //     this.timeout = setTimeout(() => {
-  //       this.elaspedTime += deltaTime;
-  //       this.remaining = this.totalTime - this.elaspedTime;
-
-  //       this.loop();
-  //     }, deltaTime);
-  //   }
-  //   pause() {}
-  // }
 
   class Timer {
+    duration = 0;
+
     constructor(
       durationMinutes,
       updateUnit = "second",
@@ -95,7 +75,7 @@
         case "second":
           return 1000;
         case "millisecond":
-          return 50;
+          return 100;
         default:
           throw new Error("Unité inconnue : " + this.updateUnit);
       }
@@ -165,6 +145,7 @@
         minutes,
         seconds,
         milliseconds: Math.floor(milliseconds),
+        total: ms,
       };
     }
 
@@ -173,8 +154,40 @@
     }
   }
 
+  const timings = [
+    { label: "1 minutes", value: 1, additionalTime: 0 },
+    { label: "1 minutes + 1s", value: 1, additionalTime: 1 },
+    { label: "1 minutes + 2s", value: 1, additionalTime: 2 },
+    { label: "2 minutes", value: 2, additionalTime: 0 },
+    { label: "2 minutes + 1s", value: 2, additionalTime: 1 },
+    { label: "2 minutes + 2s", value: 2, additionalTime: 2 },
+    { label: "3 minutes", value: 3, additionalTime: 0 },
+    { label: "3 minutes + 1s", value: 3, additionalTime: 1 },
+    { label: "3 minutes + 2s", value: 3, additionalTime: 2 },
+    { label: "5 minutes", value: 5, additionalTime: 0 },
+    { label: "5 minutes + 5s", value: 5, additionalTime: 5 },
+    { label: "10 minutes", value: 10, additionalTime: 0 },
+    { label: "15 minutes", value: 15, additionalTime: 0 },
+    { label: "15 minutes + 10s", value: 15, additionalTime: 10 },
+    { label: "20 minutes", value: 20, additionalTime: 0 },
+    { label: "30 minutes", value: 30, additionalTime: 0 },
+    { label: "60 minutes", value: 60, additionalTime: 0 },
+  ];
+  const selectedTiming = ref(null);
+  const started = ref(false);
+
+  watch(selectedTiming, (v) => {
+    timers.value.forEach((timer) => {
+      timer.duration = v * 60 * 1000;
+      timer.getRemainingTime();
+    });
+  });
+
   let activePlayer = ref(-1);
-  let timers = ref([new Timer(30, "second"), new Timer(30, "second")]);
+  let timers = ref([
+    new Timer(30, "millisecond"),
+    new Timer(30, "millisecond"),
+  ]);
 
   const pauseTimer = () => {
     timers.value.forEach((timer) => timer.pause());
@@ -189,6 +202,10 @@
       activePlayer.value = (i + 1) % 2;
     } else {
       if (activePlayer.value === i) {
+        if (started.value) {
+          timers.value[i].duration += 2000;
+          timers.value[i].getRemainingTime();
+        }
         activePlayer.value = (activePlayer.value + 1) % 2;
       }
     }
@@ -197,5 +214,7 @@
 
     timers.value[i].pause();
     timers.value[activePlayer.value].start();
+
+    started.value = true;
   };
 </script>
